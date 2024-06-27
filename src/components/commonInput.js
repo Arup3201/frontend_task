@@ -1,34 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Input, Button } from "antd";
 
-const InputHandler = ({ onSubmit, editMode = false }) => {
+const InputHandler = ({ onSubmit, editMode = false, userToEdit }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (editMode && userToEdit) {
+      setName(userToEdit.name);
+      setEmail(userToEdit.email);
+    }
+  }, [editMode, userToEdit]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !email) return;
-    onSubmit({ name, email });
+    onSubmit({ id: userToEdit?.id, name, email });
+    setName("");
+    setEmail("");
   };
 
   return (
     <div className="header-box">
-      <input
-        type="text"
+      <Input
         placeholder="Name"
+        value={name}
         onChange={(e) => {
           setName(e.target.value);
         }}
-      />
-      <input
-        type="text"
+      ></Input>
+      <Input
         placeholder="Email"
+        value={email}
         onChange={(e) => {
           setEmail(e.target.value);
         }}
-      />
-      <button type="primary">
-        {!!editMode ? "Edit user" : "Add user"}
-      </button>
+      ></Input>
+      <Button type="primary" onClick={handleSubmit}>
+        {!editMode ? "Add User" : "Edit User"}
+      </Button>
     </div>
   );
 };
